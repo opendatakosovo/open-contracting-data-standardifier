@@ -1,0 +1,114 @@
+{
+"uri":"http://data.opendatakosovo.org/procurements/2016/gjilan-contract.json",
+"publishedDate":"2014-07-21T14:45:00Z",
+"publisher": {
+        "scheme": "GB-COH",
+        "uid": "09506232",
+        "name": "Open Data Services Co-operative Limited",
+        "uri": "http://standard.open-contracting.org/examples/"
+    },
+"license":"http://opendatacommons.org/licenses/pddl/1.0/",
+"publicationPolicy":"https://github.com/open-contracting/sample-data/",
+"releases":[{
+        "language": "sq",
+        "ocid": "ocds-3n5h6d-000-00001",
+        "id": "ocds-3n5h6d-000-00001-05-contract",
+        "date": "2014-07-21T14:45:00Z",
+        "tag": ["contract"],
+        "initiationType": "tender",
+        "buyer": {
+            "identifier": {
+                "scheme": "",
+                "id": "",
+                "legalName": "Komuna e Gjilanit",
+                "uri": "https://rks-gov.net/gjilan"
+            },
+            "name": "Komuna e Gjilanit",
+            "address": {
+                "streetAddress": "Bulevardi i Pavarësisë",
+                "locality": "Gjilan",
+                "region": "Gjilan",
+                "postalCode": "60000",
+                "countryName": "Kosovo"
+            },
+            "contactPoint": {
+                "name": "Salih Kqiku",
+                "email": "salih.kqiku@rks-gov.net",
+                "telephone": "0280 326 020",
+                "faxNumber": "0280 326 020",
+                "url": "https://rks-gov.net/gjilan"
+            }
+        },
+        "awards": [
+               {
+                   "id": "ocds-3n5h6d-000-00001-award-01",
+                   "title": "Asfaltimi i rrugëve në A24:Y138 VIII -motrat Qiriazi dhe Hasan Tasini,kanalizimi në rrugën Riza Poliqka L-158 m,Malësia krahu 2-L-161m",
+                   "description": "",
+                   "status": "active",
+                   "date": "2010-05-10T10:30:00Z",
+                   "value": {
+                       "amount": 87567.41,
+                       "currency": "EUR"
+                   },
+                   "suppliers": [
+                       {
+                           "identifier": {
+                               "scheme": "",
+                               "id": "",
+                               "legalName": "EL BAU",
+                               "uri": ""
+                           },
+                           "additionalIdentifiers": [
+                               {
+                                   "scheme": "",
+                                   "id": ""
+                               }
+                           ],
+                           "name": "EL BAU",
+                           "address": {
+                               "streetAddress": "",
+                               "locality": "",
+                               "region": "",
+                               "postalCode": "",
+                               "countryName": ""
+                           },
+                           "contactPoint": {
+                               "name": "",
+                               "email": "",
+                               "telephone": "",
+                               "faxNumber": ""
+                           }
+                       }
+                   ],
+                   "items": [],
+                   "contractPeriod": {
+                       "startDate": "",
+                       "endDate": "2015-12-04T23:59:00Z"
+                   },
+                   "documents": []
+                }
+           ],
+           "contracts": [
+          {
+              "id": "ocds-3n5h6d-000-00001-contract-01",
+              "awardID": "ocds-3n5h6d-000-00001-award-01",
+              "title": "",
+              "description": "",
+              "status": "active",
+              "period": {
+                  "startDate": "",
+                  "endDate": "2015-12-04T23:59:00Z"
+              },
+              "value": {
+                     "amount": 87567.41,
+                     "currency": "EUR"
+              },
+              "items": [
+             ],
+              "dateSigned": "2015-05-22T23:59:00Z",
+              "documents": []
+        }
+     ]
+   }
+ ]
+}

@@ -23,7 +23,21 @@
                 "legalName": "Komuna e Gjilanit",
                 "uri": "https://kk.rks-gov.net/gjilan/"
             },
-            "name": "Komuna e Gjilanit"
+            "name": "Komuna e Gjilanit",
+            "address": {
+                "streetAddress": "Bulevardi i Pavarësisë",
+                "locality": "Gjilan",
+                "region": "Gjilan",
+                "postalCode": "60000",
+                "countryName": "Kosovo"
+            },
+            "contactPoint": {
+                "name": "Salih Kqiku",
+                "email": "salih.kqiku@rks-gov.net",
+                "telephone": "0280 326 020",
+                "faxNumber": "0280 326 020",
+                "url": "https://rks-gov.net/gjilan"
+            }
         },
         "planning": {
             "budget": {
@@ -31,11 +45,11 @@
                 "id": "884ce96d-5836-4ac0-8855-a19b7e45d470",
                 "description": "",
                 "amount": {
-                    "amount": 6700000.00,
+                    "amount": 88000.00,
                     "currency": "EUR"
                 },
                 "project": "Asfaltimi i rrugëve në A24:Y138 VIII -motrat Qiriazi dhe Hasan Tasini,kanalizimi në rrugën Riza Poliqka L-158 m,Malësia krahu 2-L-161m",
-                "projectID": "",
+                "projectID": "SP001",
                 "uri": "http://opendata.rks-gov.net/dataset/d4613d7a-f5cf-4b76-bfd2-8b0333bd2a5b/resource/884ce96d-5836-4ac0-8855-a19b7e45d470/"
             },
             "rationale": ""

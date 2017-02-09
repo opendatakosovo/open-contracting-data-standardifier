@@ -2,10 +2,10 @@
 "uri":"http://data.opendatakosovo.org/procurements/2016/gjilan-contract.json",
 "publishedDate":"2014-07-21T14:45:00Z",
 "publisher": {
-        "scheme": "GB-COH",
-        "uid": "09506232",
-        "name": "Open Data Services Co-operative Limited",
-        "uri": "http://standard.open-contracting.org/examples/"
+        "scheme": "",
+        "uid": "",
+        "name": "Open Data Kosovo",
+        "uri": "http://data.opendatakosovo.org/procurements/"
     },
 "license":"http://opendatacommons.org/licenses/pddl/1.0/",
 "publicationPolicy":"https://github.com/open-contracting/sample-data/",
@@ -55,37 +55,14 @@
                            "identifier": {
                                "scheme": "",
                                "id": "",
-                               "legalName": "EL BAU",
-                               "uri": ""
+                               "legalName": "EL BAU"
                            },
-                           "additionalIdentifiers": [
-                               {
-                                   "scheme": "",
-                                   "id": ""
-                               }
-                           ],
-                           "name": "EL BAU",
-                           "address": {
-                               "streetAddress": "",
-                               "locality": "",
-                               "region": "",
-                               "postalCode": "",
-                               "countryName": ""
-                           },
-                           "contactPoint": {
-                               "name": "",
-                               "email": "",
-                               "telephone": "",
-                               "faxNumber": ""
-                           }
+                           "name": "EL BAU"
                        }
                    ],
-                   "items": [],
                    "contractPeriod": {
-                       "startDate": "",
                        "endDate": "2015-12-04T23:59:00Z"
-                   },
-                   "documents": []
+                   }
                 }
            ],
            "contracts": [
@@ -96,19 +73,17 @@
               "description": "",
               "status": "active",
               "period": {
-                  "startDate": "",
                   "endDate": "2015-12-04T23:59:00Z"
               },
               "value": {
                      "amount": 87567.41,
                      "currency": "EUR"
               },
-              "items": [
-             ],
-              "dateSigned": "2015-05-22T23:59:00Z",
-              "documents": []
+              "dateSigned": "2015-05-22T23:59:00Z"
         }
      ]
    }
  ]
 }
+
+    

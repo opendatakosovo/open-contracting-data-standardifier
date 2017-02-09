@@ -1,0 +1,44 @@
+{
+"uri":"http://data.opendatakosovo.org/procurements/2016/gjilan-planning.json",
+"publishedDate":"2014-07-21T14:45:00Z",
+"publisher": {
+        "scheme": "",
+        "uid": "",
+        "name": "Open Data Kosovo",
+        "uri": "http://data.opendatakosovo.org/procurements/"
+    },
+"license":"http://opendatacommons.org/licenses/pddl/1.0/",
+"publicationPolicy":"https://github.com/opendatakosovo/open-contracting-data-standardifier/",
+"releases":[{
+        "language": "sq",
+        "ocid": "ocds-3n5h6d-000-00001",
+        "id": "ocds-3n5h6d-000-00001-01-planning",
+        "date": "2014-07-21T14:45:00Z",
+        "tag": ["planning"],
+        "initiationType": "tender",
+        "buyer": {
+            "identifier": {
+                "scheme": "",
+                "id": "",
+                "legalName": "Komuna e Gjilanit",
+                "uri": "https://kk.rks-gov.net/gjilan/"
+            },
+            "name": "Komuna e Gjilanit"
+        },
+        "planning": {
+            "budget": {
+                "source": "http://opendata.rks-gov.net/dataset/d4613d7a-f5cf-4b76-bfd2-8b0333bd2a5b/resource/884ce96d-5836-4ac0-8855-a19b7e45d470/",
+                "id": "884ce96d-5836-4ac0-8855-a19b7e45d470",
+                "description": "",
+                "amount": {
+                    "amount": 6700000.00,
+                    "currency": "EUR"
+                },
+                "project": "Asfaltimi i rrugëve në A24:Y138 VIII -motrat Qiriazi dhe Hasan Tasini,kanalizimi në rrugën Riza Poliqka L-158 m,Malësia krahu 2-L-161m",
+                "projectID": "",
+                "uri": "http://opendata.rks-gov.net/dataset/d4613d7a-f5cf-4b76-bfd2-8b0333bd2a5b/resource/884ce96d-5836-4ac0-8855-a19b7e45d470/"
+            },
+            "rationale": ""
+        },
+    }]
+}

@@ -2,33 +2,47 @@ import numpy as np
 import pandas as pd
 filepath = '/2015-raporti-vjetor-per-kontratat-e-nenshkruara-publike.xlsx'
 df = pd.read_excel(filepath, skiprows=26, skip_footer=58, index_col=False)
-# add in meta data required by OCDS
-meta = pd.read_excel(filepath, skiprows=0, skip_footer=173, index_col=False, encoding='iso8859_2')
+# pull meta data
+meta = pd.read_excel(filepath, skiprows=0, skip_footer=173, index=False, encoding='iso8859_2')
 publishedDate = pd.Series(pd.to_datetime(meta.iat[5,6]))
-publisher = pd.Series(meta.iloc[9:17,8].str.encode(encoding="utf-8", errors="strict"))
-releases = np.array(1.0) 
-uri = pd.Series(str(meta.iloc[17,8]))
+publisher = pd.Series(meta.iloc[:,8].str.encode(encoding="utf-8", errors="strict"))
+publisher_fields = pd.Series(meta.iloc[:,1]).str.encode(encoding="utf-8", errors="strict")
 
-meta_info = pd.concat([publishedDate, publisher,releases, uri], ignore_index=True, axis=1)
-meta_info.rename(columns={0:"publishedDate",1:'publisher',2:'releases', 3:'uri' }, inplace=True)
+meta_info = pd.concat([publisher_fields, publisher], ignore_index=True, axis=1)
+meta_info.iat[5,1] = publishedDate
+meta_info.rename(columns={0:"publisher_fields",1:'publisher_info'}, inplace=True)
+print meta_info
 
-df = pd.concat([df,meta_info],axis=1)
 
 #rename columns to comply with OCDS
 df.rename(index=str, columns={
-    1:'planning/budget/source', 2:'id', 3:'tender/description', 
-    4:'tender/value/description', 
-    5:'tender/procurementMethod', 6:'FPP', 7:'tender/title', 
-    8:'planning/period/endDate', 9:'tender/tenderPeriod/startDate',
-    10:'tender/tenderPeriod/endDate', 11: 'contract/DateSigned',
-    12: 'contract/contractPeriod/timeframe', 13:'contract/contractPeriod/endDate', 
-    14: 'contract/contractValue/amount/estimate', 15:'contract price', 
-    16:'Annex/AnnexValue/amount',
-    17:'Contract/contractValue/amount/deductions', 18:'contract/contractValue/amount', 
-    19: 'Award/AwardSuppliers/name', 20: 'Award/AwardSuppliers/local',
-    21:'Tender/numberOfEnquires', 21:'Tender/numberOfRequests', 'Unnamed: 21': 'Tender/numberOfTenderers',
-    22: 'Tender/numberOfTendersRejected', 23:'Tender/details/expedited', 
-    24:'Tender/awardCriteria'}, inplace=True)
+    df.rename(index=str, columns={
+    1:'releases/planning/budget/source', 
+    2:'id', 
+    3:'releases/tender/description', 
+    4:'releases/tender/value/description', 
+    5:'releases/tender/procurementMethod', 
+    6:'releases/FPP', 
+    7:'releases/tender/title', 
+    8:'releases/planning/period/endDate', 
+    9:'releases/tender/tenderPeriod/startDate',
+    10:'releases/tender/tenderPeriod/endDate', 
+    11: 'releases/contract/DateSigned',
+    12:'releases/contract/contractPeriod/timeframe', 
+    13:'releases/contract/contractPeriod/endDate', 
+    14:'releases/contract/contractValue/amount/estimate', 
+    15:'releases/contract price', 
+    16:'releases/Annex/AnnexValue/amount',
+    17:'releases/Contract/contractValue/amount/deductions', 
+    18:'releases/contract/contractValue/amount', 
+    19:'releases/Award/AwardSuppliers/name', 
+    20: 'releases/Award/AwardSuppliers/local',
+    21:'releases/Tender/numberOfEnquires', 
+    21:'releases/Tender/numberOfRequests', 
+    'Unnamed: 21': 'releases/Tender/numberOfTenderers',
+    22: 'releases/Tender/numberOfTendersRejected', 
+    23:'releases/Tender/details/expedited', 
+    24:'releases/Tender/awardCriteria'}, inplace=True)
 
 #add in currency information
 df['Value.currency'] = 'EUR'
@@ -69,11 +83,11 @@ df['Award/AwardSuppliers/local'] = df['Award/AwardSuppliers/local'].replace([1,2
 
 # convert to machine readable - Award.contractPeriod
 #split the column on white space into a new df
-x = df['contract/contractPeriod/timeframe'].str.split(expand=True)
+#x = df['contract/contractPeriod/timeframe'].str.split(expand=True)
 
 #translate Albanian time expressions into an integer amount of days
-x[0] = x[0].replace(['një', 'tri', 'tre', 'dy', '12-', '90ditë', 'dhjetë'], [1,3,3,2,12,90,10])
-x[1] = x[1].replace(['ditë', 'vite', 'muaj', 'dite', 'vit', 'muj', '-muaj'], [1,365, 30,1, 365, 30,30 ])
+#x[0] = x[0].replace(['një', 'tri', 'tre', 'dy', '12-', '90ditë', 'dhjetë'], [1,3,3,2,12,90,10])
+#x[1] = x[1].replace(['ditë', 'vite', 'muaj', 'dite', 'vit', 'muj', '-muaj'], [1,365, 30,1, 365, 30,30 ])
 
 #******issue: strings containing ë are not being replaced
 
@@ -84,8 +98,8 @@ x[1] = x[1].replace(['ditë', 'vite', 'muaj', 'dite', 'vit', 'muj', '-muaj'], [1
 # use contract length to fill in missing values in contractPeriod.endDate
 
 
-df.to_json('/Desktop/2016 Gjilan public works report.json')
-
+df.to_csv('2016 Gjilan public works report-releases.csv')
+meta_info.to_csv('2016 Gjilan public works report-meta info.csv')
 
 
 

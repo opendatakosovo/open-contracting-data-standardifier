@@ -100,6 +100,109 @@ df['Award/AwardSuppliers/local'] = df['Award/AwardSuppliers/local'].replace([1,2
 
 df.to_csv('2016 Gjilan public works report-releases.csv')
 meta_info.to_csv('2016 Gjilan public works report-meta info.csv')
+#create csv to convert to json
+csv_tojson = pd.concat([df,meta_info], axis=1)
+csv_tojson.to_csv('/Users/coreyclip/Desktop/2016 Gjilan public work report/2016 Gjilan public works report-tojson.csv' ,encoding='utf-8')
+
+# convert file to json
+json = {}
+json_list = []
+
+import csv
+file = '/2016 Gjilan public works report-tojson.csv'
+with open('file', 'rb') as csvfile:
+    csv_reader = csv.reader(csvfile, delimiter=',', quotechar='"')
+for row in csv_reader:
+    json_list{
+    "uri":"http://data.opendatakosovo.org/procurements/2016/gjilan-contract.json",
+    "publishedDate":"2014-07-21T14:45:00Z",
+    "publisher": {
+        "scheme": "",
+        "uid": "",
+        "name": "Open Data Kosovo",
+        "uri": "http://data.opendatakosovo.org/procurements/"
+        },
+    "license":"http://opendatacommons.org/licenses/pddl/1.0/",
+    "publicationPolicy":"https://github.com/open-contracting/sample-data/",
+    "buyer": {
+        
+    }
+    "releases": {
+        "ocid": row[27],
+        "language": row[26],
+        "date": "2014-07-21T14:45:00Z",
+        "tag": ["contract"],
+        "initiationType": "tender",
+        "planning": {
+            "period": {
+                "endDate":row[7],
+            }
+            "budget": {
+                "source": row[0],
+        "local_id" : row[1],
+        "tender": {
+            "description": row[2],
+            "value": {
+                "description": row[3],
+            "procurementMethod": row[4],
+            "title": row[6],
+            "tenderPeriod": {
+                "startDate": row[8],
+                "endDate": row[9],
+        "contract": {
+            "DateSigned": row[10],
+            "contractPeriod": {
+                "timeframe": row[11],
+                "endDate":row[12],
+            }
+            "contractValue": {
+                "amount": {
+                    "estimate":row[13],
+                    "deductions": row[16],
+                    "amount": row[17],
+                }
+            }
+            "numberOfRequests": row[20],
+            "numberOfTenderers": row[21],
+            "numberOfTenderersRejected": row[22],
+            "details": { 
+                "expedited": row[23],
+            }
+            "awardCriteria": row[24],
+            
+            }
+        "Value": {
+            "currency":row[25],
+        }
+        "FFP": row[5],
+        "contract price": row[14],
+        "Annex":{
+            "AnnexValue":{
+                "amount":row[15],
+                
+            }
+        }
+        "Award": {
+            "AwardSuppliers": {
+                "name":row[18],
+                "local": row[19],
+                
+            }
+        }
+            }
+        }
+            
+            }
+    
+            }
+        
+    }]
+    
+    
+
+json_list.push(json)
+
+print(json_list)
 
 
 

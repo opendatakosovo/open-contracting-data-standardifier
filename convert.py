@@ -81,128 +81,27 @@ df['tender/value/description'] = df['tender/value/description'].replace([1,2,3,4
 df['tender/procurementMethod'] = df['tender/procurementMethod'].replace([1,2,3,4,5,6,7],['open procedure', 'restricted procedure', 'design contest', 'negotiated procedure after publication of a contract notice','negotiated procedure without publication of a contract notice', 'price quotation procedure', 'cheapest offer' ])
 df['Award/AwardSuppliers/local'] = df['Award/AwardSuppliers/local'].replace([1,2],['domestic', 'international'])
 
-# convert to machine readable - Award.contractPeriod
-#split the column on white space into a new df
-#x = df['contract/contractPeriod/timeframe'].str.split(expand=True)
-
-#translate Albanian time expressions into an integer amount of days
-#x[0] = x[0].replace(['një', 'tri', 'tre', 'dy', '12-', '90ditë', 'dhjetë'], [1,3,3,2,12,90,10])
-#x[1] = x[1].replace(['ditë', 'vite', 'muaj', 'dite', 'vit', 'muj', '-muaj'], [1,365, 30,1, 365, 30,30 ])
-
-#******issue: strings containing ë are not being replaced
-
-# multiply x[0] and x[1] to create series showing contract length in days
-
-#x[3] = x[0] * x[1]
-
-# use contract length to fill in missing values in contractPeriod.endDate
 
 
 df.to_csv('2016 Gjilan public works report-releases.csv')
 meta_info.to_csv('2016 Gjilan public works report-meta info.csv')
 #create csv to convert to json
 csv_tojson = pd.concat([df,meta_info], axis=1)
-csv_tojson.to_csv('/Users/coreyclip/Desktop/2016 Gjilan public work report/2016 Gjilan public works report-tojson.csv' ,encoding='utf-8')
+csv_tojson.to_csv('//2016 Gjilan public works report-tojson.csv' ,encoding='utf-8')
 
 # convert file to json
-json = {}
-json_list = []
-
 import csv
-file = '/2016 Gjilan public works report-tojson.csv'
-with open('file', 'rb') as csvfile:
-    csv_reader = csv.reader(csvfile, delimiter=',', quotechar='"')
-for row in csv_reader:
-    json_list{
-    "uri":"http://data.opendatakosovo.org/procurements/2016/gjilan-contract.json",
-    "publishedDate":"2014-07-21T14:45:00Z",
-    "publisher": {
-        "scheme": "",
-        "uid": "",
-        "name": "Open Data Kosovo",
-        "uri": "http://data.opendatakosovo.org/procurements/"
-        },
-    "license":"http://opendatacommons.org/licenses/pddl/1.0/",
-    "publicationPolicy":"https://github.com/open-contracting/sample-data/",
-    "buyer": {
-        
-    }
-    "releases": {
-        "ocid": row[27],
-        "language": row[26],
-        "date": "2014-07-21T14:45:00Z",
-        "tag": ["contract"],
-        "initiationType": "tender",
-        "planning": {
-            "period": {
-                "endDate":row[7],
-            }
-            "budget": {
-                "source": row[0],
-        "local_id" : row[1],
-        "tender": {
-            "description": row[2],
-            "value": {
-                "description": row[3],
-            "procurementMethod": row[4],
-            "title": row[6],
-            "tenderPeriod": {
-                "startDate": row[8],
-                "endDate": row[9],
-        "contract": {
-            "DateSigned": row[10],
-            "contractPeriod": {
-                "timeframe": row[11],
-                "endDate":row[12],
-            }
-            "contractValue": {
-                "amount": {
-                    "estimate":row[13],
-                    "deductions": row[16],
-                    "amount": row[17],
-                }
-            }
-            "numberOfRequests": row[20],
-            "numberOfTenderers": row[21],
-            "numberOfTenderersRejected": row[22],
-            "details": { 
-                "expedited": row[23],
-            }
-            "awardCriteria": row[24],
-            
-            }
-        "Value": {
-            "currency":row[25],
-        }
-        "FFP": row[5],
-        "contract price": row[14],
-        "Annex":{
-            "AnnexValue":{
-                "amount":row[15],
-                
-            }
-        }
-        "Award": {
-            "AwardSuppliers": {
-                "name":row[18],
-                "local": row[19],
-                
-            }
-        }
-            }
-        }
-            
-            }
-    
-            }
-        
-    }]
-    
-    
+import json
 
-json_list.push(json)
-
-print(json_list)
-
+file = '/Users/coreyclip/Desktop/2016 Gjilan public work report/2016 Gjilan public works report-tojson.csv'
+json_file = '/Users/coreyclip/Desktop/2016 Gjilan public work report/2016 Gjilan public works report-tojson.json'
+rows=[]
+with open(file, 'rb') as csvfile:
+    csv_reader = csv.DictReader(csvfile, delimiter=',', quotechar='"')
+    title = csv_reader.fieldnames
+    for row in csv_reader:
+        rows.extend([{title[i]:row[title[i]] for i in range(len(title))}])
+    with open(json_file, 'w') as f:
+        f.write(json.dumps(rows, sort_keys=False, indent=4, separators=(',',':'),encoding='utf-8',ensure_ascii=False))
 
 

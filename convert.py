@@ -85,23 +85,81 @@ df['Award/AwardSuppliers/local'] = df['Award/AwardSuppliers/local'].replace([1,2
 
 df.to_csv('2016 Gjilan public works report-releases.csv')
 meta_info.to_csv('2016 Gjilan public works report-meta info.csv')
-#create csv to convert to json
-csv_tojson = pd.concat([df,meta_info], axis=1)
-csv_tojson.to_csv('//2016 Gjilan public works report-tojson.csv' ,encoding='utf-8')
 
 # convert file to json
-import csv
-import json
+d = df.to_dict(orient='list')
+json = {}
+json_list = []
 
-file = '/Users/coreyclip/Desktop/2016 Gjilan public work report/2016 Gjilan public works report-tojson.csv'
-json_file = '/Users/coreyclip/Desktop/2016 Gjilan public work report/2016 Gjilan public works report-tojson.json'
-rows=[]
-with open(file, 'rb') as csvfile:
-    csv_reader = csv.DictReader(csvfile, delimiter=',', quotechar='"')
-    title = csv_reader.fieldnames
-    for row in csv_reader:
-        rows.extend([{title[i]:row[title[i]] for i in range(len(title))}])
-    with open(json_file, 'w') as f:
-        f.write(json.dumps(rows, sort_keys=False, indent=4, separators=(',',':'),encoding='utf-8',ensure_ascii=False))
+for row in d:
+    json_list =  {
+        "uri":"http://data.opendatakosovo.org/procurements/2016/gjilan-contract.json",
+        "publishedDate":"2014-07-21T14:45:00Z",
+        "publisher":{
+            "scheme":"OCSD",
+            "uid":"na",
+            "name": "Open Data Kosovo",
+            "uri": "http://data.opendatakosovo.org/procurements/"
+            },
+        "license":"http://opendatacommons.org/licenses/pddl/1.0/",
+        "publicationPolicy":"https://github.com/open-contracting/sample-data/",
+        
+        {"releases": [
+            {"planning":[
+                {"period": {
+                    "endDate":row[7],
+                    },
+                },
+                {"budget": {
+                    "source": row[0]
+                    }
+                },
+                ]
+            },
+            {"tender": {
+                "description": row[2],
+                "value": {
+                    "description": row[3],
+                    },
+                "procurementMethod": row[4],
+                "title": row[6],
+                "tenderPeriod": {
+                    "startDate": row[8],
+                    "endDate": row[9],
+                    }
+            }
+            },
+            {"contract": {
+                "DateSigned": row[10],
+                "contractPeriod": {
+                    "timeframe": row[11],
+                    "endDate":row[12]
+                    },
+                "contractValue": {
+                    "amount": {
+                        "estimate":row[13],
+                        "deductions": row[16]
+                    }
+                }
+            }
+            },
+            {"FFP": row[5]},
+            {"contract price": row[14]},
+            {"Annex":{
+                "AnnexValue":{
+                    "amount":row[15],
+                    
+                    }
+                }
+            }
+            
+            ]
+        }
+    }    
+    
+
+json_list.push(json)
+
+print(json_list)
 
 

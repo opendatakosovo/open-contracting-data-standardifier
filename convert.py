@@ -15,34 +15,37 @@ print meta_info
 
 
 #rename columns to comply with OCDS
-df.rename(index=str, columns={
-    df.rename(index=str, columns={
-    1:'releases/planning/budget/source', 
-    2:'id', 
-    3:'releases/tender/description', 
-    4:'releases/tender/value/description', 
-    5:'releases/tender/procurementMethod', 
-    6:'releases/FPP', 
-    7:'releases/tender/title', 
-    8:'releases/planning/period/endDate', 
-    9:'releases/tender/tenderPeriod/startDate',
-    10:'releases/tender/tenderPeriod/endDate', 
-    11: 'releases/contract/DateSigned',
-    12:'releases/contract/contractPeriod/timeframe', 
-    13:'releases/contract/contractPeriod/endDate', 
-    14:'releases/contract/contractValue/amount/estimate', 
-    15:'releases/contract price', 
-    16:'releases/Annex/AnnexValue/amount',
-    17:'releases/Contract/contractValue/amount/deductions', 
-    18:'releases/contract/contractValue/amount', 
-    19:'releases/Award/AwardSuppliers/name', 
-    20: 'releases/Award/AwardSuppliers/local',
-    21:'releases/Tender/numberOfEnquires', 
-    21:'releases/Tender/numberOfRequests', 
-    'Unnamed: 21': 'releases/Tender/numberOfTenderers',
-    22: 'releases/Tender/numberOfTendersRejected', 
-    23:'releases/Tender/details/expedited', 
-    24:'releases/Tender/awardCriteria'}, inplace=True)
+df.rename(index=str,
+    columns={
+        df.rename(index=str, columns={
+            1:'releases/planning/budget/source', 
+            2:'id', 
+            3:'releases/tender/description', 
+            4:'releases/tender/value/description', 
+            5:'releases/tender/procurementMethod', 
+            6:'releases/FPP', 
+            7:'releases/tender/title', 
+            8:'releases/planning/period/endDate', 
+            9:'releases/tender/tenderPeriod/startDate',
+            10:'releases/tender/tenderPeriod/endDate', 
+            11: 'releases/contract/DateSigned',
+            12:'releases/contract/contractPeriod/timeframe', 
+            13:'releases/contract/contractPeriod/endDate', 
+            14:'releases/contract/contractValue/amount/estimate', 
+            15:'releases/contract price', 
+            16:'releases/Annex/AnnexValue/amount',
+            17:'releases/Contract/contractValue/amount/deductions', 
+            18:'releases/contract/contractValue/amount', 
+            19:'releases/Award/AwardSuppliers/name', 
+            20: 'releases/Award/AwardSuppliers/local',
+            21:'releases/Tender/numberOfEnquires', 
+            21:'releases/Tender/numberOfRequests', 
+            'Unnamed: 21': 'releases/Tender/numberOfTenderers',
+            22: 'releases/Tender/numberOfTendersRejected', 
+            23:'releases/Tender/details/expedited', 
+            24:'releases/Tender/awardCriteria'
+        })},
+    inplace=True)
 
 #add in currency information
 df['Value.currency'] = 'EUR'
@@ -88,77 +91,77 @@ meta_info.to_csv('2016 Gjilan public works report-meta info.csv')
 
 # convert file to json
 d = df.to_dict(orient='list')
-json = {}
 json_list = []
 
 for row in d:
-    json_list =  {
+    json = {
         "uri":"http://data.opendatakosovo.org/procurements/2016/gjilan-contract.json",
         "publishedDate":"2014-07-21T14:45:00Z",
-        "publisher":{
+        "publisher": {
             "scheme":"OCSD",
             "uid":"na",
             "name": "Open Data Kosovo",
             "uri": "http://data.opendatakosovo.org/procurements/"
-            },
+        },
         "license":"http://opendatacommons.org/licenses/pddl/1.0/",
         "publicationPolicy":"https://github.com/open-contracting/sample-data/",
-        
-        {"releases": [
-            {"planning":[
-                {"period": {
-                    "endDate":row[7],
-                    },
+        "blah": {
+            "releases": [
+                {
+                    "planning":[
+                        {"period": {
+                            "endDate": row[7],
+                            },
+                        },
+                        {"budget": {
+                            "source": row[0]
+                            }
+                        }
+                    ]
                 },
-                {"budget": {
-                    "source": row[0]
+                {
+                    "tender": {
+                        "description": row[2],
+                        "value": {
+                            "description": row[3],
+                        },
+                        "procurementMethod": row[4],
+                        "title": row[6],
+                        "tenderPeriod": {
+                            "startDate": row[8],
+                            "endDate": row[9],
+                        }
                     }
                 },
-                ]
-            },
-            {"tender": {
-                "description": row[2],
-                "value": {
-                    "description": row[3],
-                    },
-                "procurementMethod": row[4],
-                "title": row[6],
-                "tenderPeriod": {
-                    "startDate": row[8],
-                    "endDate": row[9],
+                {
+                    "contract": {
+                        "dateSigned": row[10],
+                        "contractPeriod": {
+                            "timeframe": row[11],
+                            "endDate": row[12]
+                        },
+                        "contractValue": {
+                            "amount": {
+                                "estimate": row[13],
+                                "deductions": row[16]
+                            }
+                        }
                     }
-            }
-            },
-            {"contract": {
-                "DateSigned": row[10],
-                "contractPeriod": {
-                    "timeframe": row[11],
-                    "endDate":row[12]
-                    },
-                "contractValue": {
-                    "amount": {
-                        "estimate":row[13],
-                        "deductions": row[16]
+                },
+                {"FFP": row[5]},
+                {"contractPrice": row[14]},
+                {
+                    "annex":{
+                        "annexValue":{
+                            "amount": row[15], 
+                        }
                     }
                 }
-            }
-            },
-            {"FFP": row[5]},
-            {"contract price": row[14]},
-            {"Annex":{
-                "AnnexValue":{
-                    "amount":row[15],
-                    
-                    }
-                }
-            }
-            
             ]
         }
-    }    
+    }
     
-
-json_list.push(json)
+    json_list.push(json)
 
 print(json_list)
 

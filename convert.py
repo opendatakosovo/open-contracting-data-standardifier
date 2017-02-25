@@ -1,168 +1,229 @@
-import numpy as np
-import pandas as pd
-filepath = '/2015-raporti-vjetor-per-kontratat-e-nenshkruara-publike.xlsx'
-df = pd.read_excel(filepath, skiprows=26, skip_footer=58, index_col=False)
-# pull meta data
-meta = pd.read_excel(filepath, skiprows=0, skip_footer=173, index=False, encoding='iso8859_2')
-publishedDate = pd.Series(pd.to_datetime(meta.iat[5,6]))
-publisher = pd.Series(meta.iloc[:,8].str.encode(encoding="utf-8", errors="strict"))
-publisher_fields = pd.Series(meta.iloc[:,1]).str.encode(encoding="utf-8", errors="strict")
+# -*- coding: utf-8 -*-
+import csv
+import json
+import os
+import glob
+import utils
 
-meta_info = pd.concat([publisher_fields, publisher], ignore_index=True, axis=1)
-meta_info.iat[5,1] = publishedDate
-meta_info.rename(columns={0:"publisher_fields",1:'publisher_info'}, inplace=True)
-print meta_info
+ODK_OCID = 'ocds-3n5h6d'
+LANG = 'sq'
 
 
-#rename columns to comply with OCDS
-df.rename(index=str,
-    columns={
-        df.rename(index=str, columns={
-            1:'releases/planning/budget/source', 
-            2:'id', 
-            3:'releases/tender/description', 
-            4:'releases/tender/value/description', 
-            5:'releases/tender/procurementMethod', 
-            6:'releases/FPP', 
-            7:'releases/tender/title', 
-            8:'releases/planning/period/endDate', 
-            9:'releases/tender/tenderPeriod/startDate',
-            10:'releases/tender/tenderPeriod/endDate', 
-            11: 'releases/contract/DateSigned',
-            12:'releases/contract/contractPeriod/timeframe', 
-            13:'releases/contract/contractPeriod/endDate', 
-            14:'releases/contract/contractValue/amount/estimate', 
-            15:'releases/contract price', 
-            16:'releases/Annex/AnnexValue/amount',
-            17:'releases/Contract/contractValue/amount/deductions', 
-            18:'releases/contract/contractValue/amount', 
-            19:'releases/Award/AwardSuppliers/name', 
-            20: 'releases/Award/AwardSuppliers/local',
-            21:'releases/Tender/numberOfEnquires', 
-            21:'releases/Tender/numberOfRequests', 
-            'Unnamed: 21': 'releases/Tender/numberOfTenderers',
-            22: 'releases/Tender/numberOfTendersRejected', 
-            23:'releases/Tender/details/expedited', 
-            24:'releases/Tender/awardCriteria'
-        })},
-    inplace=True)
+def process_data(buyer_data_file_path, contract_data_file_path, date_format):
 
-#add in currency information
-df['Value.currency'] = 'EUR'
-#add in language code
-df['langauge'] = 'en'
-#add OCID prefix
-df['ocid'] = 'ocds-3n5h6d-'
-df['id'] = df['id'].astype(str)
-df['ocid'] = df[['ocid','id']].apply(lambda x: ''.join(x), axis=1)
-
-
-
-###############################
-
-
-#transform datetime formats
-
-def to_date(series):
-    ts = pd.to_datetime(series, yearfirst = True)
-    return ts
-    
-startTime = str('00:00:00UTC+1h')
-endTime= str('23:23:59UTC+1h')
-
-df['planning/period/endDate'] = to_date(df['planning/period/endDate'])
-df['tender/tenderPeriod/startDate' ] = to_date(df['tender/tenderPeriod/startDate' ])
-df['tender/tenderPeriod/endDate'] = to_date(df['tender/tenderPeriod/endDate'])
-df['contract/DateSigned'] = to_date(df['contract/DateSigned'])
-df['contract/contractPeriod/endDate'] = to_date(df['contract/contractPeriod/endDate'])
-    
-#convert numerical variables back into string text
-
-df['planning/budget/source'] = df['planning/budget/source'].replace([1,2,3],['local municipal funds', 'Kosovo Consolidated Budget', 'Donation' ])
-df['tender/description'] = df['tender/description'].replace([1,2,3,4,5,6,7], ['supply', 'services', 'counseling services','design contest', 'jobs', 'concession jobs', 'immovable property'])
-df['tender/value/description'] = df['tender/value/description'].replace([1,2,3,4], ['great','medium','small', 'minimal'])
-df['tender/procurementMethod'] = df['tender/procurementMethod'].replace([1,2,3,4,5,6,7],['open procedure', 'restricted procedure', 'design contest', 'negotiated procedure after publication of a contract notice','negotiated procedure without publication of a contract notice', 'price quotation procedure', 'cheapest offer' ])
-df['Award/AwardSuppliers/local'] = df['Award/AwardSuppliers/local'].replace([1,2],['domestic', 'international'])
-
-
-
-df.to_csv('2016 Gjilan public works report-releases.csv')
-meta_info.to_csv('2016 Gjilan public works report-meta info.csv')
-
-# convert file to json
-d = df.to_dict(orient='list')
-json_list = []
-
-for row in d:
-    json = {
-        "uri":"http://data.opendatakosovo.org/procurements/2016/gjilan-contract.json",
-        "publishedDate":"2014-07-21T14:45:00Z",
-        "publisher": {
-            "scheme":"OCSD",
-            "uid":"na",
-            "name": "Open Data Kosovo",
-            "uri": "http://data.opendatakosovo.org/procurements/"
+    ocds_contract_doc = {
+        'uri': 'http://data.opendatakosovo.org/procurements/2016/gjilan-contract.json',
+        'publishedDate': utils.get_now_date(),  # TODO: Is this the date of the data source publishDate or our publishDate?
+        'publisher': {
+            'scheme': '',
+            'uid': '',
+            'name': 'Open Data Kosovo',
+            'uri': 'http://data.opendatakosovo.org/procurements/'
         },
-        "license":"http://opendatacommons.org/licenses/pddl/1.0/",
-        "publicationPolicy":"https://github.com/open-contracting/sample-data/",
-        "blah": {
-            "releases": [
-                {
-                    "planning":[
-                        {"period": {
-                            "endDate": row[7],
-                            },
-                        },
-                        {"budget": {
-                            "source": row[0]
-                            }
-                        }
-                    ]
-                },
-                {
-                    "tender": {
-                        "description": row[2],
-                        "value": {
-                            "description": row[3],
-                        },
-                        "procurementMethod": row[4],
-                        "title": row[6],
-                        "tenderPeriod": {
-                            "startDate": row[8],
-                            "endDate": row[9],
-                        }
-                    }
-                },
-                {
-                    "contract": {
-                        "dateSigned": row[10],
-                        "contractPeriod": {
-                            "timeframe": row[11],
-                            "endDate": row[12]
-                        },
-                        "contractValue": {
-                            "amount": {
-                                "estimate": row[13],
-                                "deductions": row[16]
-                            }
-                        }
-                    }
-                },
-                {"FFP": row[5]},
-                {"contractPrice": row[14]},
-                {
-                    "annex":{
-                        "annexValue":{
-                            "amount": row[15], 
-                        }
-                    }
-                }
-            ]
-        }
+        'license': 'http://opendatacommons.org/licenses/pddl/1.0/',
+        'publicationPolicy': 'https://github.com/open-contracting/sample-data/',
+        'releases': []
     }
-    
-    json_list.push(json)
 
-print(json_list)
+    with open(buyer_data_file_path, 'rb') as mdf:
+        buyer_data_reader = csv.reader(mdf)
 
+        # skip header line
+        next(buyer_data_reader)
 
+        for buyer_data_row in buyer_data_reader:
+            '''
+            unused_data = {
+                'report_date': buyer_data_row[0].strip(),
+                'report_fiscal_year': int(buyer_data_row[1].strip()),
+                'buyer_type': buyer_data_row[3].strip(),
+                'budget_code':  buyer_data_row[4].strip(),
+                'buyer_address': buyer_data_row[5].strip(),
+            }
+            '''
+
+            # Buyer:
+            buyer = {
+                'identifier': {
+                    'scheme': '',
+                    'id': '',
+                    'legalName': buyer_data_row[2].strip(),
+                    'uri': buyer_data_row[10].strip()  # To be fetched from data source
+                },
+                'name': buyer_data_row[2].strip(),
+                'address': {
+                    'streetAddress': buyer_data_row[5].strip(),  # To be fetched from data source
+                    'locality': 'Gjilan',  # FIXME: Don't hardcode this.
+                    'region': 'Gjilan',  # FIXME: Don't hardcode this.
+                    'postalCode': buyer_data_row[6].strip(),
+                    'countryName': 'Kosovo'
+                },
+                'contactPoint': {
+                    'name': buyer_data_row[8].strip(),
+                    'email': buyer_data_row[9].strip(),
+                    'telephone': buyer_data_row[7].strip(),
+                    'faxNumber': "",
+                    'url': buyer_data_row[10].strip()
+                }
+            }
+
+            # Release:
+            release = {
+                'language': 'sq',
+                'ocid': ODK_OCID + '-000-00001',  # FIXME: Figure out proper way of generating an id.
+                'id': ODK_OCID + '-000-00001-05-contract',
+                'date': utils.get_now_date(),  # FIXME: What should go here?
+                'tag': ['contract'],
+                'initiationType': 'tender',
+                'buyer': buyer,
+                'awards': [],
+                'contracts': []
+            }
+
+    with open(contract_data_file_path, 'rb') as cdf:
+        contract_data_reader = csv.reader(cdf)
+
+        # skip header line
+        next(contract_data_reader)
+
+        index = 1
+        for contract_data_row in contract_data_reader:
+            '''
+            This comment block details the first row of data, for visual testing purposes.
+
+            Budget type: 2
+            Serial number of procurement: 017
+            Type procurement: 5
+            The value of procurement: 2
+            Procurement procedures: 1
+            Classification (2 first digits of CPV): 45
+
+            Title of the procurement activity: "Mirembajtja teknike e objekteve komunale"
+
+            The date of the initiation of the procurement activity: 02.03.2015
+            Date of publication of the contract notice: 05.03.2015
+            Date of publication of the notice of award of contract: 15.05.2015
+            Date of signing the contract (in case of canceling the date of the cancellation notice): 02.06.2015
+            Deadlines for implementation of the contract (write the date of commencement and completion): 3 vite
+            Date of conclusion of the contract (date of receipt of interim / preliminary): 02.06.2018
+
+            The estimated value of the contract: € 180,000.00
+            The contract price, including all taxes etc.: € 1,135,550.25
+            Annex contract price, including all taxes etc.: N/A
+            Deductions from the contract due to restrictions: N/A
+            The total price paid for the contract: € 340,665.08
+
+            EO whose name was given contracts: "CDC"
+            Domestic operators (1); Not local (2)
+            Number of bids submitted:
+            Number of bids rejected (write only those with the lowest price compared to the winner):
+            Deadline for receiving tenders:
+            Criteria for contract award:
+            '''
+
+            # keep this commented out logic as reference for now.
+            '''
+            contract_data_dict = {
+                'budget_type': utils.budget_types.get(contract_data_row[0].strip(), empty_val)[LANG],
+                'procurement_serial_number': contract_data_row[1].strip(),
+                'procurement_type': utils.procurement_types.get(contract_data_row[2].strip(), empty_val)[LANG],
+                'procurement_value_size': utils.procurement_value_sizes.get(contract_data_row[3].strip(), empty_val)[LANG],
+                'procurement_procedure': utils.procurement_procedures.get(contract_data_row[4].strip(), empty_val)[LANG],
+                'classification': contract_data_row[5].strip(),
+                'activity_title': contract_data_row[6].strip(),
+                'procurement_initiation_date': contract_data_row[7].strip(),
+                'contract_notice_publication_date': contract_data_row[8].strip(),
+                'contract_award_notice_publication_date': contract_data_row[9].strip(),
+                'contract_signing_or_cancel_date': contract_data_row[10].strip(),
+                'contract_length': contract_data_row[11].strip(),
+                'contract_conclusion_date': contract_data_row[12].strip(),
+                'estimated_contract_value': contract_data_row[13].strip(),
+                'contract_price': contract_data_row[14].strip(),
+                'contract_annex_price': contract_data_row[15].strip(),
+                'deduction_from_contract': contract_data_row[16].strip(),
+                'total_price_paid': contract_data_row[17].strip(),
+                'awardee_name': contract_data_row[18].strip(),
+                'awardee_is_domestic': contract_data_row[19].strip(),
+                'total_bids_submitted': contract_data_row[20].strip(),
+                'total_bids_rejected_with_lower_price_than_awardee': contract_data_row[21].strip(),
+                'tender_application_deadline_type': utils.tender_application_deadline_types.get(contract_data_row[22].strip(), empty_val)[LANG],
+                'award_criteria': utils.award_criteria.get(contract_data_row[23].strip(), empty_val)[LANG],
+            }
+            '''
+
+            # Supplier:
+            supplier = {
+                'identifier': {
+                    'scheme': '',
+                    'id': '',
+                    'legalName': contract_data_row[18].strip()
+                },
+                'name': contract_data_row[18].strip()
+            }
+
+            award = {
+                'id': ODK_OCID + '-000-00001-award-' + str(index),
+                'title': contract_data_row[6].strip(),
+                'description': contract_data_row[6].strip(),
+                'status': 'active',  # FIXME: That is the value for completed award?
+                'date': utils.convert_to_ocds_date_format(index, contract_data_row[9].strip(), date_format),  # FIXME: Need to format date correctly.
+                'value': {
+                    'amount': utils.clean_price_value(index, contract_data_row[17].strip()),  # To be fetched from data source
+                    'currency': 'EUR'
+                },
+                'suppliers': [],
+                'contractPeriod': {
+                    'endDate': utils.convert_to_ocds_date_format(index, contract_data_row[12].strip(), date_format) # FIXME: Need to format date correctly.
+                }
+            }
+
+            # Push supplier into supplier list.
+            award['suppliers'].append(supplier)
+
+            # Push award into award list.
+            release['awards'].append(award)
+
+            # Contract:
+            contract = {
+                'id': ODK_OCID + '-000-00001-contract-' + str(index),  # FIXME: Figure out proper way of generating an id.
+                'awardID': ODK_OCID + '-000-00001-award-' + str(index),  # FIXME: Figure out proper way of generating an id.
+                'title': contract_data_row[6].strip(),
+                'description': contract_data_row[6].strip(),
+                'status': 'active',  # FIXME: Figure out what to put here.
+                'period': {
+                    'endDate': utils.convert_to_ocds_date_format(index, contract_data_row[12].strip(), date_format),  # FIXME: Need to format date correctly.
+                },
+                'value': {
+                    'amount': utils.clean_price_value(index, contract_data_row[14].strip()),
+                    'currency': "EUR"
+                },
+                'dateSigned': utils.convert_to_ocds_date_format(index, contract_data_row[10].strip(), date_format)  # FIXME: Need to format date correctly.
+            }
+
+            # Push award into award list.
+            release['contracts'].append(contract)
+
+            # Push release into release list
+            ocds_contract_doc['releases'].append(release)
+
+            # Write document into JSON file
+            complete_contract_json_str = json.dumps(ocds_contract_doc, indent=4)
+
+            with open('output/gjilan-2015-contract-' + str(index) + '.json', 'w') as json_file:
+                json_file.write(complete_contract_json_str)
+
+            # Reset release  values in preparation of next contract.
+            ocds_contract_doc['releases'] = []
+            release['awards'] = []
+            release['contracts'] = []
+            award['suppliers'] = []
+
+            index += 1
+
+# Delete all previously created files
+json_file_list = glob.glob('output/*.json')
+for f in json_file_list:
+    os.remove(f)
+
+# Create OCDS contract JSON files.
+process_data('sample-csv/gjilan-2015-buyer-data.csv', 'sample-csv/gjilan-2015-contract-data.csv', '%d.%m.%Y')

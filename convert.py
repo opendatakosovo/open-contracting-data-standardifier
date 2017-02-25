@@ -220,6 +220,9 @@ def process_data(buyer_data_file_path, contract_data_file_path, date_format):
 
             index += 1
 
+if not os.path.exists('output'):
+    os.makedirs('output')
+
 # Delete all previously created files
 json_file_list = glob.glob('output/*.json')
 for f in json_file_list:

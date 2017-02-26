@@ -82,9 +82,9 @@ def clean_price_value(index, price, verbose=False):
         return float_price
 
     except ValueError:
-        transformation_log += ' --> -1'
+        transformation_log += ' --> 0'
         print transformation_log + '. Unable to clean price!'
-        return -1
+        return 0  # FIXME: Is this what we want?
 
 
 def convert_to_ocds_date_format(index, date, given_date_format, verbose=False):
@@ -109,3 +109,53 @@ def convert_to_ocds_date_format(index, date, given_date_format, verbose=False):
 def get_now_date():
     ocds_date_str = datetime.now().strftime('%Y-%m-%dT%I:%M:00Z')
     return ocds_date_str
+
+
+def create_buyer_data_dict(index, row, date_format):
+    data_dict = {
+        'report_date': convert_to_ocds_date_format(index, row[0].strip(), date_format),
+        'report_fiscal_year': int(row[1].strip()),
+        'buyer_name': row[2].strip(),
+        'buyer_type': row[3].strip(),
+        'budget_code': row[4].strip(),
+        'buyer_address': row[5].strip(),
+        'buyer_postal_code': row[6].strip(),
+        'contact_telephone': row[7].strip(),
+        'contact_name': row[8].strip(),
+        'contact_email': row[9].strip(),
+        'contact_url': row[10].strip()
+    }
+
+    return data_dict
+
+
+def create_data_dict(index, row, date_format, lang='sq'):
+    data_dict = {
+        'budget_type': budget_types.get(row[0].strip(), empty_val)[lang],
+        'procurement_serial_number': row[1].strip(),
+        'procurement_type': procurement_types.get(row[2].strip(), empty_val)[lang],
+        'procurement_value_size': procurement_value_sizes.get(row[3].strip(), empty_val)[lang],
+        'procurement_procedure': procurement_procedures.get(row[4].strip(), empty_val)[lang],
+        'classification': row[5].strip(),
+        'activity_title': row[6].strip(),
+        'procurement_initiation_date': convert_to_ocds_date_format(index, row[7].strip(), date_format),
+        'contract_notice_publication_date': convert_to_ocds_date_format(index, row[8].strip(), date_format),
+        'contract_award_notice_publication_date': convert_to_ocds_date_format(index, row[9].strip(), date_format),
+        'contract_signing_or_cancel_date': convert_to_ocds_date_format(index, row[10].strip(), date_format),
+        'contract_length': row[11].strip(),
+        'contract_conclusion_date': convert_to_ocds_date_format(index, row[12].strip(), date_format),
+        'estimated_contract_value': clean_price_value(index, row[13].strip()),
+        'contract_price': clean_price_value(index, row[14].strip()),
+        'contract_annex_price': clean_price_value(index, row[15].strip()),
+        'deduction_from_contract': clean_price_value(index, row[16].strip()),
+        'total_price_paid': clean_price_value(index, row[17].strip()),
+        'awardee_name': row[18].strip(),
+        'awardee_is_domestic': row[19].strip(),
+        'total_bids_submitted': row[20].strip(),
+        'total_bids_rejected_with_lower_price_than_awardee': row[21].strip(),
+        'tender_application_deadline_type':
+            tender_application_deadline_types.get(row[22].strip(), empty_val)[lang],
+        'award_criteria': award_criteria.get(row[23].strip(), empty_val)[lang],
+    }
+
+    return data_dict

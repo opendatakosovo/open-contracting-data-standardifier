@@ -53,8 +53,8 @@ def process_data(buyer_data_file_path, data_file_path, date_format):
             doc_utils.write_planning(ocds_planning, index)
 
             ocds_planning['releases'] = []
-            release_planning['planning'] = []
-            release_planning['tender'] = []
+            release_planning['planning'] = {}
+            release_planning['tender'] = {}
 
             '''
                 Create Tender Document

@@ -131,6 +131,14 @@ def create_planning(data_dict):
 
     return planning
 
+def create_tender(data_dict):
+    tender = {
+        'id':'',
+        'title': data_dict['activity_title'],
+        'description': data_dict['activity_title'],
+        'value': data_dict['procurement_value_size'],
+        'award_criteria': data_dict['award_criteria'],
+        'numberOfTenderers': data_dict['total_bids_submitted'], 
 
 def create_contract(data_dict, index):
     contract = {

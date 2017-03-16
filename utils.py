@@ -35,13 +35,13 @@ procurement_procedures = {
 }
 
 tender_application_deadline_types = {
-    '1': {'en': '', 'sq': 'Afati kohor normal'},
-    '2': {'en': '', 'sq': 'Afati kohor i shkurtuar'}
+    '1': {'en': 'normal', 'sq': 'Afati kohor normal'},
+    '2': {'en': 'shortened', 'sq': 'Afati kohor i shkurtuar'}
 }
 
 award_criteria = {
-    '1': {'en': '', 'sq': 'Çmimi më i ulët'},
-    '2': {'en': '', 'sq': 'Tenderi ekonomikisht më i favorshëm'}
+    '1': {'en': 'lowest price', 'sq': 'Çmimi më i ulët'},
+    '2': {'en': 'most economical', 'sq': 'Tenderi ekonomikisht më i favorshëm'}
 }
 
 empty_val = {'en': 'N/A', 'sq': 'N/A'}

@@ -8,13 +8,13 @@ budget_types = {
 }
 
 procurement_types = {
-    '1': {'en': '', 'sq': 'Furnizim'},
-    '2': {'en': '', 'sq': 'Sherbime'},
-    '3': {'en': '', 'sq': 'Sherbime Keshillimi'},
-    '4': {'en': '', 'sq': 'Konkurs projektimi'},
-    '5': {'en': '', 'sq': 'Punë'},
-    '6': {'en': '', 'sq': 'Punë me koncesion'},
-    '7': {'en': '', 'sq': 'Pronë e palujtshme'}
+    '1': {'en': 'supply', 'sq': 'Furnizim'},
+    '2': {'en': 'services', 'sq': 'Sherbime'},
+    '3': {'en': 'counseling services', 'sq': 'Sherbime Keshillimi'},
+    '4': {'en': 'design competition', 'sq': 'Konkurs projektimi'},
+    '5': {'en': 'work', 'sq': 'Punë'},
+    '6': {'en': 'work concession', 'sq': 'Punë me koncesion'},
+    '7': {'en': 'immovable property', 'sq': 'Pronë e palujtshme'}
 }
 
 procurement_value_sizes = {

@@ -45,7 +45,7 @@ def process_data(buyer_data_file_path, data_file_path, date_format):
             '''
             planning = doc_utils.create_planning(data_dict)
             release_planning['planning'] = planning
-            release_planning['tender'] = {}  # TODO: create tender document
+            release_planning['tender'] = {}  # TODO: create tender document 
 
             ocds_planning['releases'].append(release_planning)
 
@@ -59,13 +59,18 @@ def process_data(buyer_data_file_path, data_file_path, date_format):
             '''
                 Create Tender Document
             '''
-            # TODO: Create document and write it to JSON file
+            tender = doc_utils.create_tender(data_dict)
+            
+            releases_planning['tender'].append(tender)
+            
+            # Output to JSON file
+            doc_utils.write_tender(ocds_planning, index)
 
             '''
                 Create Tender Amendment Document
             '''
             # TODO: Create document and write it to JSON file
-
+         
             '''
                 Create Award Document
             '''

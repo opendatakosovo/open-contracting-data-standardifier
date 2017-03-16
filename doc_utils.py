@@ -138,7 +138,10 @@ def create_tender(data_dict):
         'description': data_dict['activity_title'],
         'value': data_dict['procurement_value_size'],
         'award_criteria': data_dict['award_criteria'],
-        'numberOfTenderers': data_dict['total_bids_submitted'], 
+        'numberOfTenderers': data_dict['total_bids_submitted'],
+    }
+    
+    return tender
 
 def create_contract(data_dict, index):
     contract = {
@@ -186,5 +189,9 @@ def write_contract(ocds_contract, index):
 
 
 def write_planning(ocds_planning, index):
+    file_path = 'output/gjilan-2015-planning-' + str(index) + '.json'
+    _write_doc(file_path, ocds_planning)
+    
+def write_tender(ocds_planning, index):
     file_path = 'output/gjilan-2015-planning-' + str(index) + '.json'
     _write_doc(file_path, ocds_planning)
